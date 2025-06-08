@@ -1,6 +1,6 @@
 package tank
 
-func GetTank() *Tank{
+func NewTank() *Tank{
 	return &Tank{}
 }
 

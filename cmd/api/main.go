@@ -1,0 +1,83 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"cristianUrbina/water_level_sensor_system/internal/api"
+	"cristianUrbina/water_level_sensor_system/internal/infrastructure/persistence/mysqlsensormeasurement"
+
+	sensormeasurementapp "cristianUrbina/water_level_sensor_system/internal/application/sensor_measurement"
+	mysqlsensor "cristianUrbina/water_level_sensor_system/internal/infrastructure/persistence/mysql/sensor"
+
+	"github.com/gorilla/mux"
+	"github.com/mehdihadeli/go-mediatr"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
+
+func main() {
+	log.Println("connecting to db")
+	dsn := "cristian:cris2001@tcp(localhost:3306)/home_iot?parseTime=true"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to DB: %v", err)
+	}
+	log.Println("connected to db")
+	sensorRepo, err := mysqlsensor.NewMySQLSensorRepository(db)
+	if err != nil {
+		log.Fatalf("failed to create repo: %v", err)
+	}
+
+	sensorMeasRepo, err := mysqlsensormeasurement.NewMySQLSensorMeasurementRepository(db)
+	if err != nil {
+		log.Fatalf("failed to create repo: %v", err)
+	}
+
+	log.Println("setting up mediatr handler")
+	appHandler := sensormeasurementapp.NewAddSensorMeasurementHandler(sensorMeasRepo, sensorRepo)
+	err = mediatr.RegisterRequestHandler[*sensormeasurementapp.AddSensorMeasurementQuery, *sensormeasurementapp.AddSensorMeasurementResponse](appHandler)
+	if err != nil {
+		log.Fatalf("failed to register handler: %v", err)
+	}
+
+	// mux := http.NewServeMux()
+	r := mux.NewRouter()
+	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
+	log.Println("creating server")
+	log.Println("Starting server on :8080")
+	if err = http.ListenAndServe(":8080", r); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
+}
+
+// func main() {
+// 	// Setup DB
+// 	if err != nil {
+// 		log.Fatalf("failed to connect to DB: %v", err)
+// 	}
+//
+// 	// Init repository and handler
+// 	repo, err := mysqldb.NewSensorRepository(db)
+// 	if err != nil {
+// 		log.Fatalf("failed to create repo: %v", err)
+// 	}
+//
+// 	getSensorsHandler := appsensor.NewCreateGetSensorsBySystemHandler(repo)
+//
+// 	// Register Mediatr handler
+// 	err = mediatr.RegisterRequestHandler[*appsensor.GetSensorsBySystemQuery, *appsensor.GetSensorsBySystemResponse](getSensorsHandler)
+// 	if err != nil {
+// 		log.Fatalf("failed to register handler: %v", err)
+// 	}
+//
+// 	// Register HTTP route
+// 	mux := http.NewServeMux()
+// 	mux.Handle("/sensors", api.NewGetSensorsBySystemAPIHandler())
+//
+// 	// Start server
+// 	log.Println("Starting server on :8080")
+// 	if err := http.ListenAndServe(":8080", mux); err != nil {
+// 		log.Fatalf("server failed: %v", err)
+// 	}
+// }

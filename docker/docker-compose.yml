@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0.42
+    container_name: mysql_8_0_42
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: cristian
+      MYSQL_PASSWORD: cris2001
+      MYSQL_DATABASE: home_iot
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
