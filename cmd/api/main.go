@@ -36,12 +36,11 @@ func main() {
 
 	log.Println("setting up mediatr handler")
 	appHandler := sensormeasurementapp.NewAddSensorMeasurementHandler(sensorMeasRepo, sensorRepo)
-	err = mediatr.RegisterRequestHandler[*sensormeasurementapp.AddSensorMeasurementQuery, *sensormeasurementapp.AddSensorMeasurementResponse](appHandler)
+	err = mediatr.RegisterRequestHandler(appHandler)
 	if err != nil {
 		log.Fatalf("failed to register handler: %v", err)
 	}
 
-	// mux := http.NewServeMux()
 	r := mux.NewRouter()
 	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
 	log.Println("creating server")
@@ -50,34 +49,3 @@ func main() {
 		log.Fatalf("failed to start server: %v", err)
 	}
 }
-
-// func main() {
-// 	// Setup DB
-// 	if err != nil {
-// 		log.Fatalf("failed to connect to DB: %v", err)
-// 	}
-//
-// 	// Init repository and handler
-// 	repo, err := mysqldb.NewSensorRepository(db)
-// 	if err != nil {
-// 		log.Fatalf("failed to create repo: %v", err)
-// 	}
-//
-// 	getSensorsHandler := appsensor.NewCreateGetSensorsBySystemHandler(repo)
-//
-// 	// Register Mediatr handler
-// 	err = mediatr.RegisterRequestHandler[*appsensor.GetSensorsBySystemQuery, *appsensor.GetSensorsBySystemResponse](getSensorsHandler)
-// 	if err != nil {
-// 		log.Fatalf("failed to register handler: %v", err)
-// 	}
-//
-// 	// Register HTTP route
-// 	mux := http.NewServeMux()
-// 	mux.Handle("/sensors", api.NewGetSensorsBySystemAPIHandler())
-//
-// 	// Start server
-// 	log.Println("Starting server on :8080")
-// 	if err := http.ListenAndServe(":8080", mux); err != nil {
-// 		log.Fatalf("server failed: %v", err)
-// 	}
-// }
