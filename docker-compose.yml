@@ -12,5 +12,20 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  goapi:
+    build:
+      context: .
+    container_name: go_api
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: cristian
+      DB_PASSWORD: cris2001
+      DB_NAME: home_iot
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
