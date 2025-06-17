@@ -17,13 +17,11 @@ import (
 )
 
 func main() {
-	log.Println("connecting to db")
 	dsn := "cristian:cris2001@tcp(localhost:3306)/home_iot?parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to DB: %v", err)
 	}
-	log.Println("connected to db")
 	sensorRepo, err := mysqlsensor.NewMySQLSensorRepository(db)
 	if err != nil {
 		log.Fatalf("failed to create repo: %v", err)
@@ -34,7 +32,6 @@ func main() {
 		log.Fatalf("failed to create repo: %v", err)
 	}
 
-	log.Println("setting up mediatr handler")
 	appHandler := sensormeasurementapp.NewAddSensorMeasurementHandler(sensorMeasRepo, sensorRepo)
 	err = mediatr.RegisterRequestHandler(appHandler)
 	if err != nil {
@@ -43,7 +40,6 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
-	log.Println("creating server")
 	log.Println("Starting server on :8080")
 	if err = http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("failed to start server: %v", err)
