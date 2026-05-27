@@ -11,6 +11,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - home_iot_net
 
   goapi:
     build:
@@ -24,8 +26,14 @@ services:
       DB_USER: cristian
       DB_PASSWORD: cris2001
       DB_NAME: home_iot
+    networks:
+      - home_iot_net
     depends_on:
       - mysql
 
 volumes:
   mysql_data:
+
+networks:
+  home_iot_net:
+    name: home_iot_net

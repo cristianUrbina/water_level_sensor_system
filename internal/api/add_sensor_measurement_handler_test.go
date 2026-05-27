@@ -108,5 +108,5 @@ func TestServeHTTPWithNonExistingSensor(t *testing.T) {
 
 	w := runRequest(apiHandler, req)
 
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusNotFound, w.Code)
 }
