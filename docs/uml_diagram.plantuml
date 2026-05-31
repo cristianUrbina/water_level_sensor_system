@@ -1,0 +1,89 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class Device {
+    +ID : UUID
+    +Name : string
+}
+
+class DeviceMetadata {
+    +Location : string
+    +HardwareModel : string
+    +FirmwareVersion : string
+    +SerialNumber : string
+}
+
+class Sensor {
+    +ID : UUID
+    +Profile : MeasurementProfile
+    +CreatedAt : time.Time
+    +UpdatedAt : time.Time
+}
+
+class SensorMetadata {
+    +Name : string
+    +Description : string
+    +HardwareModel : string
+    +CalibrationOffset : float64
+}
+
+class Capability {
+    +Name : string
+    +Description : string
+}
+
+class MeasurementProfile {
+    +Name : string
+}
+
+class SensorReading {
+    +ID : UUID
+    +Value : float64
+    +Unit : string
+    +Timestamp : time.Time
+}
+
+class Measurement {
+    +Type : string
+    +Value : float64
+    +Unit : string
+}
+
+class Tank {
+    +ID : UUID
+    +Height : float64
+    +Radius : float64
+}
+
+interface Interpreter {
+    +Interpret(reading : SensorReading) : Measurement
+}
+
+class TankInterpreter
+class DistanceInterpreter
+
+Device "1" *-- "1" DeviceMetadata
+
+Device "1" o-- "*" Sensor
+
+Sensor "1" *-- "1" SensorMetadata
+
+Sensor "*" -- "*" Capability
+
+Sensor "*" --> "1" MeasurementProfile
+
+Sensor "1" o-- "*" SensorReading
+
+SensorReading "*" --> "1" Capability
+
+MeasurementProfile --> Interpreter
+
+Interpreter <|.. TankInterpreter
+Interpreter <|.. DistanceInterpreter
+
+TankInterpreter --> Tank
+
+Interpreter ..> SensorReading
+Interpreter ..> Measurement
+@enduml
