@@ -13,7 +13,7 @@ func NewSensorReading(sensorID uuid.UUID, capability Capability, value float64, 
 	}
 
 	if timestamp.IsZero() {
-		return SensorReading{}, InvalidTimestampErr
+		return SensorReading{}, ErrInvalidTimestamp
 	}
 
 	return SensorReading{

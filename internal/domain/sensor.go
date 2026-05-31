@@ -8,14 +8,6 @@ import (
 
 type Capability string
 
-const (
-	CapabilityDistance    Capability = "distance"
-	CapabilityPressure    Capability = "pressure"
-	CapabilityTemperature Capability = "temperature"
-	CapabilityHumidity    Capability = "humidity"
-	CapabilityVoltage     Capability = "voltage"
-)
-
 type MeasurementProfile string
 
 const (
@@ -42,9 +34,7 @@ type SensorMetadata struct {
 
 	Description string
 
-	Location string
-
 	HardwareModel string
 
-	FirmwareVersion string
+	CalibrationOffset float64
 }

@@ -32,5 +32,5 @@ func TestSensorReadingRequiresSensorID(t *testing.T) {
 
 func TestSensorReadingRequiresTimestamp(t *testing.T) {
 	_, err := domain.NewSensorReading(uuid.New(), domain.CapabilityDistance, 23.3, "cm", time.Time{})
-	assert.ErrorIs(t, err, domain.InvalidTimestampErr)
+	assert.ErrorIs(t, err, domain.ErrInvalidTimestamp)
 }

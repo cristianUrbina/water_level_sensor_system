@@ -21,9 +21,7 @@ func TestSensorCreation(t *testing.T) {
 		Metadata: domain.SensorMetadata{
 			Name:            "Tank Sensor 1",
 			Description:     "Ultrasonic water tank sensor",
-			Location:        "Roof Tank",
 			HardwareModel:   "JSN-SR04T",
-			FirmwareVersion: "1.0.0",
 		},
 	}
 
@@ -132,9 +130,7 @@ func TestSensorMetadata(t *testing.T) {
 	metadata := domain.SensorMetadata{
 		Name:            "Outdoor Sensor",
 		Description:     "Environmental sensor",
-		Location:        "Garden",
 		HardwareModel:   "BME280",
-		FirmwareVersion: "2.1.5",
 	}
 
 	assert.Equal(
@@ -145,20 +141,8 @@ func TestSensorMetadata(t *testing.T) {
 
 	assert.Equal(
 		t,
-		"Garden",
-		metadata.Location,
-	)
-
-	assert.Equal(
-		t,
 		"BME280",
 		metadata.HardwareModel,
-	)
-
-	assert.Equal(
-		t,
-		"2.1.5",
-		metadata.FirmwareVersion,
 	)
 }
 

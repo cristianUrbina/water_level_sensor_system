@@ -2,4 +2,5 @@ package domain
 
 import "errors"
 
-var InvalidTimestampErr = errors.New("invalid timestamp")
+var ErrInvalidTimestamp = errors.New("invalid timestamp")
+var ErrInvalidCapability = errors.New("invalid capability")
