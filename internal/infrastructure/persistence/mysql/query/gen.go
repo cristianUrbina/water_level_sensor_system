@@ -15,6 +15,7 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
+
 var (
 	Q                 = new(Query)
 	Sensor            *sensor
