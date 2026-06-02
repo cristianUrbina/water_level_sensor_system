@@ -7,6 +7,9 @@ import (
 	"os"
 
 	"cristianUrbina/water_level_sensor_system/internal/api"
+	"cristianUrbina/water_level_sensor_system/internal/application"
+	"cristianUrbina/water_level_sensor_system/internal/infrastructure/mqtt"
+	"cristianUrbina/water_level_sensor_system/internal/infrastructure/persistence"
 	"cristianUrbina/water_level_sensor_system/internal/infrastructure/persistence/mysqlsensormeasurement"
 
 	dbutils "cristianUrbina/water_level_sensor_system/pkg"
@@ -52,5 +55,27 @@ func main() {
 	log.Println("Starting server on :8080")
 	if err = http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("failed to start server: %v", err)
+	}
+
+	_, err = mqtt.NewPahoClient(mqtt.Config{
+		BrokerURL: "tcp://localhost:1883",
+		ClientID:  "water-level-api",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	readingsRepo, err := persistence.NewMySQLReadingsRepository(db)
+	if err != nil {
+		log.Fatalf("error creating readings repo: %v", err)
+	}
+	sensorDomainRepo, err := persistence.NewMySQLSensorRepository(db)
+	if err != nil {
+		log.Fatalf("error creating readings repo: %v", err)
+	}
+	addReadingHandler := application.NewAddSensorReadingHandler(readingsRepo, sensorDomainRepo)
+	err = mediatr.RegisterRequestHandler(addReadingHandler)
+	if err != nil {
+		log.Fatalf("failed to register handler: %v", err)
 	}
 }

@@ -26,7 +26,9 @@ func NewSensorReading(sensorID uuid.UUID, capability Capability, value float64, 
 }
 
 type SensorReading struct {
+	ID         uuid.UUID `gorm:"type:varchar(36);primaryKey"`
 	SensorID   uuid.UUID
+	Sensor     Sensor `gorm:"foreignKey:SensorID;references:ID"`
 	Capability Capability
 	Value      float64
 	Unit       string

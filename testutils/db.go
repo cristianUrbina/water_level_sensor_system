@@ -1,8 +1,9 @@
 package testutils
 
 import (
-	"cristianUrbina/water_level_sensor_system/internal/domain/sensordm"
+	"cristianUrbina/water_level_sensor_system/internal/domain"
 	sensormeasurement "cristianUrbina/water_level_sensor_system/internal/domain/sensor_measurement"
+	"cristianUrbina/water_level_sensor_system/internal/domain/sensordm"
 	"errors"
 	"fmt"
 	"log"
@@ -56,10 +57,16 @@ func CreateDockerizedMySQLDB() (*gorm.DB, func(), error) {
 
 func RunMigrations(gdb *gorm.DB) error {
 	err := gdb.AutoMigrate(
-		&sensordm.Sensor{},
-		&sensormeasurement.SensorMeasurement{},
+		// &sensordm.Sensor{},
+		// &sensormeasurement.SensorMeasurement{},
+		&domain.SensorReading{},
+		&domain.Sensor{},
 		)
 	return err
+}
+
+func AddDomainSensors(gdb *gorm.DB, sensors[]*domain.Sensor){
+	addObjects(gdb, sensors)
 }
 
 func AddSensors(gdb *gorm.DB, sensors []*sensordm.Sensor) {

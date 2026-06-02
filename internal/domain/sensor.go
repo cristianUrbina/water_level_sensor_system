@@ -17,11 +17,11 @@ const (
 )
 
 type Sensor struct {
-	ID uuid.UUID
+	ID uuid.UUID `gorm:"type:varchar(36);primaryKey"`
 
-	Metadata SensorMetadata
+	Metadata SensorMetadata `gorm:"embedded;embeddedPrefix:meta_"`
 
-	Capabilities []Capability
+	Capabilities []Capability `gorm:"type:json"`
 
 	Profile MeasurementProfile
 

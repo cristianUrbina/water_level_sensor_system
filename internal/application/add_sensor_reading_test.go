@@ -23,7 +23,7 @@ func TestAddSensorReadingWithValidReading(t *testing.T) {
 	}
 
 	sensors.EXPECT().GetByID(gomock.Any(), sensor.ID).Return(sensor, nil)
-	readings.EXPECT().Add(gomock.Any(), gomock.Cond(func(x domain.SensorReading) bool { return x.SensorID == sensor.ID })).Return(nil)
+	readings.EXPECT().Add(gomock.Any(), gomock.Cond(func(x *domain.SensorReading) bool { return x.SensorID == sensor.ID })).Return(nil)
 	handler := application.NewAddSensorReadingHandler(readings, sensors)
 	query := application.AddSensorReadingQuery{
 		SensorID:   sensor.ID,
@@ -31,7 +31,7 @@ func TestAddSensorReadingWithValidReading(t *testing.T) {
 		Timestamp:  time.Now(),
 		Value:      30,
 	}
-	err := handler.Handle(context.Background(), query)
+	_, err := handler.Handle(context.Background(), query)
 	assert.NoError(t, err)
 }
 
@@ -50,7 +50,7 @@ func TestAddSensorReadingForUnexistentSensorID(t *testing.T) {
 		Capability: "distance",
 		Timestamp:  time.Now(),
 	}
-	err := handler.Handle(context.Background(), query)
+	_, err := handler.Handle(context.Background(), query)
 	assert.ErrorIs(t, application.ErrSensorNotFound, err)
 }
 
@@ -70,6 +70,6 @@ func TestAddSensorReadingBadReading(t *testing.T) {
 		Timestamp:  time.Time{},
 		Value:      30,
 	}
-	err := handler.Handle(context.Background(), query)
+	_, err := handler.Handle(context.Background(), query)
 	assert.ErrorIs(t, application.ErrInvalidEntity, err)
 }

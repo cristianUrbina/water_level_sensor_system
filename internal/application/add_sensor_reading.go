@@ -8,6 +8,7 @@ import (
 	"cristianUrbina/water_level_sensor_system/internal/domain"
 
 	"github.com/google/uuid"
+	"github.com/mehdihadeli/go-mediatr"
 )
 
 type IAddSensorReadingHandler interface {
@@ -22,6 +23,10 @@ type AddSensorReadingQuery struct {
 	Timestamp  time.Time
 }
 
+func (AddSensorReadingQuery) RequestName() string {
+    return "AddSensorReadingQuery"
+}
+
 type AddSensorReadingHandler struct {
 	Sensors  domain.ISensorRepository
 	Readings domain.IReadingRepository
@@ -34,21 +39,21 @@ func NewAddSensorReadingHandler(readings domain.IReadingRepository, sensors doma
 	}
 }
 
-func (a AddSensorReadingHandler) Handle(ctx context.Context, query AddSensorReadingQuery) error {
+func (a AddSensorReadingHandler) Handle(ctx context.Context, query AddSensorReadingQuery) (mediatr.Unit, error) {
 	sensor, err := a.Sensors.GetByID(ctx, query.SensorID)
 	if err != nil {
 		if errors.Is(err, ErrRecordNotFound) {
-			return ErrSensorNotFound
+			return mediatr.Unit{}, ErrSensorNotFound
 		}
-		return err
+		return mediatr.Unit{}, err
 	}
 	capability, err := domain.ParseCapability(query.Capability)
 	if err != nil {
-		return err
+		return mediatr.Unit{}, err
 	}
 	reading, err := domain.NewSensorReading(sensor.ID, capability, query.Value, query.Unit, query.Timestamp)
 	if err != nil {
-		return ErrInvalidEntity
+		return mediatr.Unit{}, ErrInvalidEntity
 	}
-	return a.Readings.Add(ctx, reading)
+	return mediatr.Unit{}, a.Readings.Add(ctx, &reading)
 }
