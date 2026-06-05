@@ -50,20 +50,16 @@ func main() {
 		log.Fatalf("failed to register handler: %v", err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
-	log.Println("Starting server on :8080")
-	if err = http.ListenAndServe(":8080", r); err != nil {
-		log.Fatalf("failed to start server: %v", err)
-	}
-
-	_, err = mqtt.NewPahoClient(mqtt.Config{
-		BrokerURL: "tcp://localhost:1883",
+	mqttClient, err := mqtt.NewPahoClient(mqtt.Config{
+		BrokerURL: "tcp://192.168.1.125:1883",
 		ClientID:  "water-level-api",
+		Username: "mqttuser",
+		Password: "cris2001",
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
+	mqttClient.Subscribe(mqtt.SensorReadings("8b7f1c5a-3e8f-47cc-a7bc-b8610d489b56"), 1, mqtt.NewReadingHandler())
 
 	readingsRepo, err := persistence.NewMySQLReadingsRepository(db)
 	if err != nil {
@@ -78,4 +74,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to register handler: %v", err)
 	}
+
+
+	r := mux.NewRouter()
+	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
+	log.Println("Starting server on :8080")
+	if err = http.ListenAndServe(":8080", r); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
+
 }

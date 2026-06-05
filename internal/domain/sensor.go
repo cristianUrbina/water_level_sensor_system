@@ -21,7 +21,7 @@ type Sensor struct {
 
 	Metadata SensorMetadata `gorm:"embedded;embeddedPrefix:meta_"`
 
-	Capabilities []Capability `gorm:"type:json"`
+	Capabilities []Capability `gorm:"serializer:json"`
 
 	Profile MeasurementProfile
 

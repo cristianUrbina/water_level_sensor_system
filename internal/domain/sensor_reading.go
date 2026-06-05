@@ -17,6 +17,7 @@ func NewSensorReading(sensorID uuid.UUID, capability Capability, value float64, 
 	}
 
 	return SensorReading{
+		ID:         uuid.New(),
 		SensorID:   sensorID,
 		Capability: capability,
 		Value:      value,

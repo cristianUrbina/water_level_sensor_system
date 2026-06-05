@@ -3,6 +3,7 @@ package mqtt
 import (
 	"fmt"
 	"log"
+	"time"
 
 	paho "github.com/eclipse/paho.mqtt.golang"
 )
@@ -19,11 +20,12 @@ type Config struct {
 }
 
 func NewPahoClient(cfg Config) (*PahoClient, error) {
-	// TODO: Add the logic to actually connect
+	log.Println("Connecting to MQTT broker", cfg)
 	opts := paho.NewClientOptions()
 
 	opts.AddBroker(cfg.BrokerURL)
 	opts.SetClientID(cfg.ClientID)
+
 	if cfg.Username != "" {
 		opts.SetUsername(cfg.Username)
 		opts.SetPassword(cfg.Password)
@@ -35,15 +37,32 @@ func NewPahoClient(cfg Config) (*PahoClient, error) {
 	opts.OnConnect = func(c paho.Client) {
 		log.Println("MQTT connected")
 	}
+
 	opts.OnConnectionLost = func(c paho.Client, err error) {
 		log.Printf("MQTT connection lost: %v", err)
 	}
+
 	client := paho.NewClient(opts)
+
 	token := client.Connect()
-	token.Wait()
+
+	// ✅ Avoid infinite wait
+	if !token.WaitTimeout(5 * time.Second) {
+		return nil, fmt.Errorf("mqtt connection timeout")
+	}
+
+	// ✅ Check token error
 	if err := token.Error(); err != nil {
 		return nil, fmt.Errorf("connect mqtt broker: %w", err)
 	}
+
+	// ✅ Final safety check
+	if !client.IsConnected() {
+		return nil, fmt.Errorf("mqtt client not connected")
+	}
+
+	log.Println("MQTT connection established successfully ✅")
+
 	return &PahoClient{
 		client: client,
 	}, nil
