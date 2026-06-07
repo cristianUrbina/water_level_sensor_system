@@ -46,17 +46,14 @@ func NewPahoClient(cfg Config) (*PahoClient, error) {
 
 	token := client.Connect()
 
-	// ✅ Avoid infinite wait
 	if !token.WaitTimeout(5 * time.Second) {
 		return nil, fmt.Errorf("mqtt connection timeout")
 	}
 
-	// ✅ Check token error
 	if err := token.Error(); err != nil {
 		return nil, fmt.Errorf("connect mqtt broker: %w", err)
 	}
 
-	// ✅ Final safety check
 	if !client.IsConnected() {
 		return nil, fmt.Errorf("mqtt client not connected")
 	}

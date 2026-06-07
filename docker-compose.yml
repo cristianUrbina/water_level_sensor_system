@@ -1,7 +1,7 @@
 services:
   mysql:
-    image: mysql:8.0.42
-    container_name: mysql_8_0_42
+    image: mysql:lts
+    container_name: home_iot_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_USER: cristian

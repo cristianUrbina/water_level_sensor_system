@@ -75,7 +75,6 @@ func main() {
 		log.Fatalf("failed to register handler: %v", err)
 	}
 
-
 	r := mux.NewRouter()
 	r.HandleFunc("/sensor/{sensorID}/measurement", api.NewAddSensorMeasurementAPIHandler().ServeHTTP).Methods("POST")
 	log.Println("Starting server on :8080")
