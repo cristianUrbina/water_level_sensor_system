@@ -74,10 +74,13 @@ func (c *PahoClient) Subscribe(
 		topic,
 		qos,
 		func(_ paho.Client, msg paho.Message) {
-			_ = handler.Handle(Message{
+			err := handler.Handle(Message{
 				Topic:   topic,
 				Payload: msg.Payload(),
 			})
+			if err != nil {
+				log.Printf("error handling mqtt message: %v", err)
+			}
 		},
 	)
 	token.Wait()

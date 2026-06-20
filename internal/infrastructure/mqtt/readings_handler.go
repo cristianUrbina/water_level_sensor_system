@@ -3,6 +3,7 @@ package mqtt
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"time"
 
 	"cristianUrbina/water_level_sensor_system/internal/application"
@@ -19,6 +20,7 @@ func NewReadingHandler() *ReadingHandler {
 }
 
 func (r *ReadingHandler) Handle(msg Message) error {
+	log.Printf("Handling mqtt message %v", msg.Payload)
 	var dto sensorReadingDTO
 	if err := json.Unmarshal(msg.Payload, &dto); err != nil {
 		return err
@@ -31,6 +33,7 @@ func (r *ReadingHandler) Handle(msg Message) error {
 	if err != nil {
 		return pkg.ErrInvalidTimestamp
 	}
+	log.Printf("Adding %v", dto)
 	q := application.AddSensorReadingQuery{
 		SensorID:   sensorID,
 		Capability: dto.Capability,

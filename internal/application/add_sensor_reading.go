@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"cristianUrbina/water_level_sensor_system/internal/domain"
@@ -40,6 +41,7 @@ func NewAddSensorReadingHandler(readings domain.IReadingRepository, sensors doma
 }
 
 func (a AddSensorReadingHandler) Handle(ctx context.Context, query AddSensorReadingQuery) (mediatr.Unit, error) {
+	log.Printf("Handling %v", query)
 	sensor, err := a.Sensors.GetByID(ctx, query.SensorID)
 	if err != nil {
 		if errors.Is(err, ErrRecordNotFound) {
