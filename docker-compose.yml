@@ -3,29 +3,29 @@ services:
     image: mysql:lts
     container_name: home_iot_db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_USER: cristian
-      MYSQL_PASSWORD: cris2001
-      MYSQL_DATABASE: home_iot
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ${DUMP_PATH}:/docker-entrypoint-initdb.d/start.sql
     networks:
       - home_iot_net
 
   goapi:
-    build:
-      context: .
+    image: crisurbina/home_sensor_api:latest
     container_name: go_api
     ports:
-      - "8080:8080"
+      - "${API_PORT}:8080"
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: cristian
-      DB_PASSWORD: cris2001
-      DB_NAME: home_iot
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
     networks:
       - home_iot_net
     depends_on:

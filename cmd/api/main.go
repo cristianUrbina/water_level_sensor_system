@@ -59,8 +59,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// mqttClient.Subscribe(mqtt.SensorReadings("8b7f1c5a-3e8f-47cc-a7bc-b8610d489b56"), 1, mqtt.NewReadingHandler())
-	mqttClient.Subscribe("sensors/+/readings", 1, mqtt.NewReadingHandler())
 
 	readingsRepo, err := persistence.NewMySQLReadingsRepository(db)
 	if err != nil {
@@ -74,6 +72,12 @@ func main() {
 	err = mediatr.RegisterRequestHandler(addReadingHandler)
 	if err != nil {
 		log.Fatalf("failed to register handler: %v", err)
+	}
+
+	// mqttClient.Subscribe(mqtt.SensorReadings("8b7f1c5a-3e8f-47cc-a7bc-b8610d489b56"), 1, mqtt.NewReadingHandler())
+	err = mqttClient.Subscribe("sensors/+/readings", 1, mqtt.NewReadingHandler())
+	if err != nil {
+		log.Printf("Subscribe failed: %v", err)
 	}
 
 	r := mux.NewRouter()

@@ -9,7 +9,7 @@ import (
 )
 
 func SetInitialData(db *gorm.DB) {
-	ID, _ := uuid.Parse("8b7f1c5a-3e8f-47cc-a7bc-b8610d489b56")
+	ID, _ := uuid.Parse("002dcf46-2904-4478-9868-a7ff3f2bf1fc")
 	// sensors := []*sensordm.Sensor{
 	// 	&sensordm.Sensor{
 	// 		ID: ID,
