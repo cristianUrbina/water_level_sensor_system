@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	// server := "192.168.1.125"
-	server := "localhost"
+	server := "192.168.1.125"
+	// server := "localhost"
 	dsn := fmt.Sprintf("cristian:cris2001@tcp(%s:3306)/home_iot?parseTime=true", server)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

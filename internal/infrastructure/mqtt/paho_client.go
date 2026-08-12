@@ -19,6 +19,12 @@ type Config struct {
 	Password  string
 }
 
+func NewPahoClientFromClient(c paho.Client) *PahoClient {
+	return &PahoClient{
+		client : c,
+	}
+}
+
 func NewPahoClient(cfg Config) (*PahoClient, error) {
 	log.Println("Connecting to MQTT broker", cfg)
 	opts := paho.NewClientOptions()
@@ -36,6 +42,14 @@ func NewPahoClient(cfg Config) (*PahoClient, error) {
 
 	opts.OnConnect = func(c paho.Client) {
 		log.Println("MQTT connected")
+		topic := "sensors/+/readings"
+		mqttPahoClient := NewPahoClientFromClient(c)
+		err := mqttPahoClient.Subscribe(topic, 1, NewReadingHandler())
+		if err != nil {
+			log.Printf("error suscribing to %s", topic)
+		} else {
+			log.Printf("subscribed to %s", topic)
+		}
 	}
 
 	opts.OnConnectionLost = func(c paho.Client, err error) {
